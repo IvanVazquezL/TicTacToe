@@ -30,11 +30,6 @@ public class TicTacToe {
         do {
             currentPlayer = getCurrentPlayer();
 
-            if (!areTherePossibleMoves()) {
-                System.out.println("Game not finished");
-                break;
-            }
-
             System.out.println("Enter the coordinates:");
             String inputLine = scanner.nextLine();
 
@@ -158,6 +153,11 @@ public class TicTacToe {
         // Check rows
         for (int row = 0; row < 3; row++) {
             String firstCell = table.get(row).get(0);
+
+            if (!firstCell.equals(currentPlayer)) {
+                continue;
+            }
+
             String secondCell = table.get(row).get(1);
             String thirdCell = table.get(row).get(2);
 
@@ -169,6 +169,11 @@ public class TicTacToe {
         // Check columns
         for (int col = 0; col < 3; col++) {
             String firstCell = table.get(0).get(col);
+
+            if (!firstCell.equals(currentPlayer)) {
+                continue;
+            }
+
             String secondCell = table.get(1).get(col);
             String thirdCell = table.get(2).get(col);
 
@@ -177,8 +182,13 @@ public class TicTacToe {
             }
         }
 
-        String firstCellLR = table.get(0).get(0);
         String middleCell = table.get(1).get(1);
+
+        if (!middleCell.equals(currentPlayer)) {
+            return false;
+        }
+
+        String firstCellLR = table.get(0).get(0);
         String thirdCellLR = table.get(2).get(2);
 
         String firstCellRL = table.get(0).get(2);
@@ -192,51 +202,4 @@ public class TicTacToe {
 
         return false;
     }
-
-    private static boolean areTherePossibleMoves() {
-        // Check rows
-        for (int row = 0; row < 3; row++) {
-            String firstCell = replaceForCurrentPlayerIfEmpty(table.get(row).get(0));
-            String secondCell = replaceForCurrentPlayerIfEmpty(table.get(row).get(1));
-            String thirdCell = replaceForCurrentPlayerIfEmpty(table.get(row).get(2));
-
-            if (firstCell.equals(secondCell) && firstCell.equals(thirdCell)) {
-                return true;
-            }
-        }
-
-        /*
-        // Check columns
-        for (int col = 0; col < 3; col++) {
-            String firstCell = replaceForCurrentPlayerIfEmpty(table.get(0).get(col));
-            String secondCell = replaceForCurrentPlayerIfEmpty(table.get(1).get(col));
-            String thirdCell = replaceForCurrentPlayerIfEmpty(table.get(2).get(col));
-
-            if (firstCell.equals(secondCell) && firstCell.equals(thirdCell)) {
-                return true;
-            }
-        }
-
-        String firstCellLR = replaceForCurrentPlayerIfEmpty(table.get(0).get(0));
-        String middleCell = replaceForCurrentPlayerIfEmpty(table.get(1).get(1));
-        String thirdCellLR = replaceForCurrentPlayerIfEmpty(table.get(2).get(2));
-
-        String firstCellRL = replaceForCurrentPlayerIfEmpty(table.get(0).get(2));
-        String thirdCellRL = replaceForCurrentPlayerIfEmpty(table.get(2).get(0));
-
-        // Check diagonals
-        if ((firstCellLR.equals(middleCell) && firstCellLR.equals(thirdCellLR)) ||
-                (firstCellRL.equals(middleCell) && firstCellRL.equals(thirdCellRL))) {
-            return true;
-        }
-        *
-         */
-
-        return false;
-    }
-
-    private static String replaceForCurrentPlayerIfEmpty(String cellValue) {
-        return cellValue.equals(" ") ? currentPlayer : cellValue;
-    }
-
 }
