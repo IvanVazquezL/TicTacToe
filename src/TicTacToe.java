@@ -1,55 +1,62 @@
 package tictactoe;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class TicTacToe {
     private static ArrayList<ArrayList<String>> table = new ArrayList<>();
-    private static HashMap<String, String> tablesSymbols = new HashMap<>();
     private static Scanner scanner = new Scanner(System.in);
     private static int quantityX = 0;
     private static int quantityO = 0;
     private static String currentPlayer;
+    private static ArrayList<String> availableSpaces = new ArrayList<>(Arrays.asList(
+            "1 1", "1 2", "1 3",
+            "2 1", "2 2", "2 3",
+            "3 1", "3 2", "3 3"
+    ));
 
-
-    TicTacToe(String initialState) {
-        tablesSymbols.put("_", " ");
-        tablesSymbols.put("X", "X");
-        tablesSymbols.put("O", "O");
-        initializeTable(initialState);
+    TicTacToe() {
+        initializeTable();
         displayTable();
     }
 
     public static void startGame() {
-        System.out.println("Enter the cells:");
-        String initialState = scanner.nextLine();
-        new TicTacToe(initialState);
+        new TicTacToe();
 
         do {
             currentPlayer = getCurrentPlayer();
+            int[] coordinates;
 
-            System.out.println("Enter the coordinates:");
-            String inputLine = scanner.nextLine();
+            if (currentPlayer.equals("X")) {
+                System.out.println("Enter the coordinates:");
+                String inputLine = scanner.nextLine();
 
-            if (!isAValidInputLine(inputLine)) {
-                System.out.println("You should enter numbers!");
-                continue;
-            }
+                if (!isAValidInputLine(inputLine)) {
+                    System.out.println("You should enter numbers!");
+                    continue;
+                }
 
-            int[] coordinates = Arrays.stream(inputLine.split("\\s"))
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
+                coordinates = Arrays.stream(inputLine.split("\\s"))
+                        .mapToInt(Integer::parseInt)
+                        .toArray();
 
-            if (!areCoordinatesWithinBounds(coordinates)) {
-                System.out.println("Coordinates should be from 1 to 3!");
-                continue;
-            }
+                if (!areCoordinatesWithinBounds(coordinates)) {
+                    System.out.println("Coordinates should be from 1 to 3!");
+                    continue;
+                }
 
-            if (!isCellEmpty(coordinates)) {
-                System.out.println("This cell is occupied! Choose another one!");
-                continue;
+                if (!isCellEmpty(coordinates)) {
+                    System.out.println("This cell is occupied! Choose another one!");
+                    continue;
+                }
+
+                availableSpaces.remove(inputLine);
+            } else {
+                System.out.println("Making move level \"easy\"");
+                String inputLine = getRandomAvailableSpace();
+                coordinates = Arrays.stream(inputLine.split("\\s"))
+                        .mapToInt(Integer::parseInt)
+                        .toArray();
+                availableSpaces.remove(inputLine);
             }
 
             setValueToCell(coordinates);
@@ -64,13 +71,15 @@ public class TicTacToe {
                 System.out.println("Draw");
                 break;
             }
-
-            if (quantityX + quantityO < 9) {
-                System.out.println("Game not finished");
-                break;
-            }
-
         } while(true);
+    }
+
+    private static String getRandomAvailableSpace() {
+        Random random = new Random();
+        // Generate a random index within the range of availableSpaces
+        int randomIndex = random.nextInt(availableSpaces.size());
+
+        return availableSpaces.get(randomIndex);
     }
 
     private static void setValueToCell(int[] coordinates) {
@@ -110,27 +119,11 @@ public class TicTacToe {
         return cellValue.equals(" ");
     }
 
-    private static void initializeTable(String initialState) {
-        int initialStateIndex = 0;
+    private static void initializeTable() {
         for (int i = 0; i < 3; i++) {
             ArrayList<String> row = new ArrayList<>();
             for (int j = 0; j < 3; j++) {
-                String symbol = String.valueOf(initialState.charAt(initialStateIndex));
-                row.add(tablesSymbols.get(symbol));
-
-                switch (symbol) {
-                    case "X":
-                        quantityX++;
-                        break;
-                    case "O":
-                        quantityO++;
-                        break;
-                    default:
-                        // Handle any other symbols if needed
-                        break;
-                }
-
-                initialStateIndex++;
+                row.add(" ");
             }
             table.add(row);
         }
