@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="add32867-b54c-4bf2-a0a9-091139289584" name="Changes" comment="Stage One Solution">
+    <list default="true" id="add32867-b54c-4bf2-a0a9-091139289584" name="Changes" comment="Stage Two Solution Computer Player">
+      <change afterPath="$PROJECT_DIR$/src/Computer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TicTacToe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TicTacToe.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,13 +92,22 @@
       <option name="project" value="LOCAL" />
       <updated>1708196658227</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Stage Two Solution Computer Player">
+      <option name="closed" value="true" />
+      <created>1708220884172</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1708220884172</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial files" />
     <MESSAGE value="Loop TicTacToe" />
     <MESSAGE value="Stage One Solution" />
-    <option name="LAST_COMMIT_MESSAGE" value="Stage One Solution" />
+    <MESSAGE value="Stage Two Solution Computer Player" />
+    <option name="LAST_COMMIT_MESSAGE" value="Stage Two Solution Computer Player" />
   </component>
 </project>

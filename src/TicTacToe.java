@@ -1,13 +1,12 @@
-package tictactoe;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class TicTacToe {
     private static ArrayList<ArrayList<String>> table = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
     private static int quantityX = 0;
     private static int quantityO = 0;
-    private static String currentPlayer;
     private static ArrayList<String> availableSpaces = new ArrayList<>(Arrays.asList(
             "1 1", "1 2", "1 3",
             "2 1", "2 2", "2 3",
@@ -16,107 +15,93 @@ public class TicTacToe {
 
     TicTacToe() {
         initializeTable();
-        displayTable();
     }
 
     public static void startGame() {
         new TicTacToe();
 
+        String inputCommand;
         do {
-            currentPlayer = getCurrentPlayer();
-            int[] coordinates;
+            System.out.println("Input command:");
+            inputCommand = scanner.nextLine();
 
-            if (currentPlayer.equals("X")) {
-                System.out.println("Enter the coordinates:");
-                String inputLine = scanner.nextLine();
-
-                if (!isAValidInputLine(inputLine)) {
-                    System.out.println("You should enter numbers!");
-                    continue;
-                }
-
-                coordinates = Arrays.stream(inputLine.split("\\s"))
-                        .mapToInt(Integer::parseInt)
-                        .toArray();
-
-                if (!areCoordinatesWithinBounds(coordinates)) {
-                    System.out.println("Coordinates should be from 1 to 3!");
-                    continue;
-                }
-
-                if (!isCellEmpty(coordinates)) {
-                    System.out.println("This cell is occupied! Choose another one!");
-                    continue;
-                }
-
-                availableSpaces.remove(inputLine);
-            } else {
-                System.out.println("Making move level \"easy\"");
-                String inputLine = getRandomAvailableSpace();
-                coordinates = Arrays.stream(inputLine.split("\\s"))
-                        .mapToInt(Integer::parseInt)
-                        .toArray();
-                availableSpaces.remove(inputLine);
+            if (!validateInputCommand(inputCommand)) {
+                System.out.println("Bad Parameters!");
+                continue;
             }
 
-            setValueToCell(coordinates);
-            displayTable();
-
-            if (checkForWin()) {
-                System.out.printf("%s wins\n", currentPlayer);
-                break;
+            if (inputCommand.equals("exit")) {
+                return;
             }
+            break;
+        } while(true);
 
-            if (quantityX == 5) {
-                System.out.println("Draw");
-                break;
+        displayTable();
+
+        String[] typeOfPlayers = inputCommand.split("\\s");
+
+        Player playerOne = getTypeOfPlayer(typeOfPlayers[1], "X");
+        Player playerTwo = getTypeOfPlayer(typeOfPlayers[2], "O");
+
+        ArrayList<Player> players = new ArrayList<>();
+
+        players.add(playerOne);
+        players.add(playerTwo);
+
+        do {
+            for (Player player : players) {
+                int[] coordinates = player.getCoordinates(availableSpaces, table);
+
+                setValueToCell(coordinates, player.getSymbol());
+                displayTable();
+
+                if (checkForWin(player.getSymbol())) {
+                    System.out.printf("%s wins\n", player.getSymbol());
+                    return;
+                }
+
+                if (quantityX == 5) {
+                    System.out.println("Draw");
+                    return;
+                }
             }
         } while(true);
     }
 
-    private static String getRandomAvailableSpace() {
-        Random random = new Random();
-        // Generate a random index within the range of availableSpaces
-        int randomIndex = random.nextInt(availableSpaces.size());
-
-        return availableSpaces.get(randomIndex);
+    private static Player getTypeOfPlayer(String type, String symbol) {
+        return type.equals("user") ?
+                new User(symbol) :
+                new Computer(symbol, type);
     }
 
-    private static void setValueToCell(int[] coordinates) {
+    private static boolean validateInputCommand(String inputCommand) {
+        // Define regular expressions for valid commands
+        String[] patterns = {
+                "^start (easy|medium|user) (easy|medium|user)$",
+                "^exit$"
+        };
+
+        // Check if the command matches any pattern
+        for (String pattern : patterns) {
+            if (Pattern.matches(pattern, inputCommand)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void setValueToCell(int[] coordinates, String symbol) {
         int row = coordinates[0] - 1;
         int col = coordinates[1] - 1;
 
-        table.get(row).set(col, currentPlayer);
+        table.get(row).set(col, symbol);
 
-        if (currentPlayer.equals("X")) {
+        if (symbol.equals("X")) {
             quantityX++;
         } else {
             quantityO++;
         }
-    }
-
-    private static String getCurrentPlayer() {
-        return quantityX == quantityO ? "X" : "O";
-    }
-
-    private static boolean areCoordinatesWithinBounds(int[] coordinates) {
-        int MIN_COORDINATE = 1;
-        int MAX_COORDINATE = 3;
-
-        int row = coordinates[0];
-        int column = coordinates[1];
-
-        return row >= MIN_COORDINATE && row <= MAX_COORDINATE &&
-                column >= MIN_COORDINATE && column <= MAX_COORDINATE;
-    }
-
-    private static boolean isAValidInputLine(String inputLine) {
-        return inputLine.matches("\\d+\\s\\d+");
-    }
-
-    private static boolean isCellEmpty(int[] coordinates) {
-        String cellValue = table.get(coordinates[0] - 1).get(coordinates[1] - 1);
-        return cellValue.equals(" ");
     }
 
     private static void initializeTable() {
@@ -142,12 +127,12 @@ public class TicTacToe {
         System.out.println("---------");
     }
 
-    private static boolean checkForWin() {
+    private static boolean checkForWin(String symbol) {
         // Check rows
         for (int row = 0; row < 3; row++) {
             String firstCell = table.get(row).get(0);
 
-            if (!firstCell.equals(currentPlayer)) {
+            if (!firstCell.equals(symbol)) {
                 continue;
             }
 
@@ -163,7 +148,7 @@ public class TicTacToe {
         for (int col = 0; col < 3; col++) {
             String firstCell = table.get(0).get(col);
 
-            if (!firstCell.equals(currentPlayer)) {
+            if (!firstCell.equals(symbol)) {
                 continue;
             }
 
@@ -177,7 +162,7 @@ public class TicTacToe {
 
         String middleCell = table.get(1).get(1);
 
-        if (!middleCell.equals(currentPlayer)) {
+        if (!middleCell.equals(symbol)) {
             return false;
         }
 
