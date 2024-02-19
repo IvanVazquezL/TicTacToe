@@ -1,6 +1,7 @@
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class TicTacToe {
     private static ArrayList<ArrayList<String>> table = new ArrayList<>();
@@ -22,49 +23,52 @@ public class TicTacToe {
 
         String inputCommand;
         do {
-            System.out.println("Input command:");
-            inputCommand = scanner.nextLine();
+            do {
+                System.out.println("Input command:");
+                inputCommand = scanner.nextLine();
 
-            if (!validateInputCommand(inputCommand)) {
-                System.out.println("Bad Parameters!");
-                continue;
-            }
-
-            if (inputCommand.equals("exit")) {
-                return;
-            }
-            break;
-        } while(true);
-
-        displayTable();
-
-        String[] typeOfPlayers = inputCommand.split("\\s");
-
-        Player playerOne = getTypeOfPlayer(typeOfPlayers[1], "X");
-        Player playerTwo = getTypeOfPlayer(typeOfPlayers[2], "O");
-
-        ArrayList<Player> players = new ArrayList<>();
-
-        players.add(playerOne);
-        players.add(playerTwo);
-
-        do {
-            for (Player player : players) {
-                int[] coordinates = player.getCoordinates(availableSpaces, table);
-
-                setValueToCell(coordinates, player.getSymbol());
-                displayTable();
-
-                if (checkForWin(player.getSymbol())) {
-                    System.out.printf("%s wins\n", player.getSymbol());
-                    return;
+                if (!validateInputCommand(inputCommand)) {
+                    System.out.println("Bad Parameters!");
+                    continue;
                 }
 
-                if (quantityX == 5) {
-                    System.out.println("Draw");
+                if (inputCommand.equals("exit")) {
                     return;
                 }
-            }
+                break;
+            } while(true);
+
+            displayTable();
+
+            String[] typeOfPlayers = inputCommand.split("\\s");
+
+            Player playerOne = getTypeOfPlayer(typeOfPlayers[1], "X");
+            Player playerTwo = getTypeOfPlayer(typeOfPlayers[2], "O");
+
+            ArrayList<Player> players = new ArrayList<>();
+
+            players.add(playerOne);
+            players.add(playerTwo);
+
+            outerloop:
+            do {
+                for (Player player : players) {
+                    int[] coordinates = player.getCoordinates(availableSpaces, table);
+
+                    setValueToCell(coordinates, player.getSymbol());
+                    displayTable();
+
+                    if (checkForWin(player.getSymbol())) {
+                        System.out.printf("%s wins\n", player.getSymbol());
+                        break outerloop;
+                    }
+
+                    if (quantityX == 5) {
+                        System.out.println("Draw");
+                        break outerloop;
+                    }
+                }
+            } while(true);
         } while(true);
     }
 
