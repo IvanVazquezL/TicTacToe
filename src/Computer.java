@@ -1,7 +1,6 @@
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Function;
 
 public class Computer extends User{
     private String difficulty;
@@ -12,7 +11,7 @@ public class Computer extends User{
 
     @Override
     public int[] getCoordinates(ArrayList<String> availableSpaces, ArrayList<ArrayList<String>> table) {
-        System.out.printf("Making move level \"%s\"", difficulty);
+        System.out.printf("Making move level \"%s\"\n", difficulty);
         String inputLine;
 
         switch (difficulty) {
@@ -21,10 +20,13 @@ public class Computer extends User{
                 break;
             case "medium":
                 inputLine = getMediumAvailableSpace(availableSpaces, table);
+                break;
             default:
                 inputLine = "";
                 break;
         }
+
+        System.out.printf("inputLine: %s\n", inputLine);
 
         availableSpaces.remove(inputLine);
 
@@ -42,13 +44,13 @@ public class Computer extends User{
     }
 
     private String getMediumAvailableSpace(ArrayList<String> availableSpaces, ArrayList<ArrayList<String>> table) {
-        String availableSpaceForTwoInARow = getAvailableSpaceForTwoInARow(table);
+        String availableSpaceForTwoInARow = getAvailableSpaceForTwoInARow(table, this::findAvailableSpaceInLineToWin);
 
         if (availableSpaceForTwoInARow != null) {
             return availableSpaceForTwoInARow;
         }
 
-        String availableSpaceToBlockOpponentWin = getAvailableSpaceToBlockOpponentWin(table);
+        String availableSpaceToBlockOpponentWin = getAvailableSpaceToBlockOpponentWin(table, this::findAvailableSpaceInLineToBlockOpponentsWin);
 
         if (availableSpaceToBlockOpponentWin != null) {
             return availableSpaceToBlockOpponentWin;
@@ -57,88 +59,87 @@ public class Computer extends User{
         return getRandomAvailableSpace(availableSpaces);
     }
 
-    private String getAvailableSpaceForTwoInARow(ArrayList<ArrayList<String>> table) {
-        // Check rows
-        for (int row = 0; row < 3; row++) {
-            ArrayList<String> cells = new ArrayList<>();
+    private String getAvailableSpaceByFunction(ArrayList<ArrayList<String>> table, Function<ArrayList<HashMap<String, String>>, String> lineChecker) {
+        // Check rows and columns
+        for (int i = 0; i < 3; i++) {
+            ArrayList<HashMap<String, String>> row = new ArrayList<>();
+            HashMap<String, String> rowMap = new HashMap<>();
 
-            String firstCell = table.get(row).get(0);
-            String secondCell = table.get(row).get(1);
-            String thirdCell = table.get(row).get(2);
+            ArrayList<HashMap<String, String>> column = new ArrayList<>();
+            HashMap<String, String> columnMap = new HashMap<>();
 
-            cells.add(firstCell);
-            cells.add(secondCell);
-            cells.add(thirdCell);
+            for (int j = 0; j < 3; j++) {
+                String cellCoordinateForRow = i + " " + j;
+                String cellValueForRow = table.get(i).get(j);
+                rowMap.put(cellCoordinateForRow, cellValueForRow);
+                row.add(rowMap);
 
-            String availableSpace = findAvailableSpaceInLine(cells);
-
+                String cellCoordinateForColumn = j + " " + i;
+                String cellValueForColumn = table.get(j).get(i);
+                columnMap.put(cellCoordinateForColumn, cellValueForColumn);
+                column.add(columnMap);
+            }
+            String availableSpace = lineChecker.apply(row);
             if (availableSpace != null) {
                 return availableSpace;
             }
-        }
-
-        // Check columns
-        for (int col = 0; col < 3; col++) {
-            ArrayList<String> cells = new ArrayList<>();
-
-            String firstCell = table.get(0).get(col);
-            String secondCell = table.get(1).get(col);
-            String thirdCell = table.get(2).get(col);
-
-            cells.add(firstCell);
-            cells.add(secondCell);
-            cells.add(thirdCell);
-
-            String availableSpace = findAvailableSpaceInLine(cells);
-
+            availableSpace = lineChecker.apply(column);
             if (availableSpace != null) {
                 return availableSpace;
             }
         }
 
         // Check diagonals
-        String middleCell = table.get(1).get(1);
+        ArrayList<HashMap<String, String>> diagonalLR = new ArrayList<>();
+        HashMap<String, String> diagonalLRMap = new HashMap<>();
 
-        String firstCellLR = table.get(0).get(0);
-        String thirdCellLR = table.get(2).get(2);
+        ArrayList<HashMap<String, String>> diagonalRL = new ArrayList<>();
+        HashMap<String, String> diagonalRLMap = new HashMap<>();
 
-        ArrayList<String> diagonalLR = new ArrayList<>();
-        diagonalLR.add(firstCellLR);
-        diagonalLR.add(middleCell);
-        diagonalLR.add(thirdCellLR);
+        for (int i = 0; i < 3; i++) {
+            String cellCoordinateForDiagonalLR = i + " " + i;
+            String cellValueForDiagonalLR = table.get(i).get(i);
+            diagonalLRMap.put(cellCoordinateForDiagonalLR, cellValueForDiagonalLR);
+            diagonalLR.add(diagonalLRMap);
 
-        String availableSpaceDiagonalLR = findAvailableSpaceInLine(diagonalLR);
-
-        if (availableSpaceDiagonalLR != null) {
-            return availableSpaceDiagonalLR;
+            String cellCoordinateForDiagonalRL = i + " " + (2 - i);
+            String cellValueForDiagonalRL = table.get(i).get(2 - i);
+            diagonalRLMap.put(cellCoordinateForDiagonalRL, cellValueForDiagonalRL);
+            diagonalRL.add(diagonalRLMap);
         }
 
-        String firstCellRL = table.get(0).get(2);
-        String thirdCellRL = table.get(2).get(0);
+        String availableSpace = lineChecker.apply(diagonalLR);
+        if (availableSpace != null) {
+            return availableSpace;
+        }
 
-        ArrayList<String> diagonalRL = new ArrayList<>();
-        diagonalRL.add(firstCellRL);
-        diagonalRL.add(middleCell);
-        diagonalRL.add(thirdCellRL);
-
-        String availableSpaceDiagonalRL = findAvailableSpaceInLine(diagonalRL);
-
-        if (availableSpaceDiagonalRL != null) {
-            return availableSpaceDiagonalRL;
+        availableSpace = lineChecker.apply(diagonalRL);
+        if (availableSpace != null) {
+            return availableSpace;
         }
 
         return null;
     }
 
-    private String findAvailableSpaceInLine(ArrayList<String> line) {
+    private String getAvailableSpaceForTwoInARow(ArrayList<ArrayList<String>> table, Function<ArrayList<HashMap<String, String>>, String> lineChecker) {
+        return getAvailableSpaceByFunction(table, lineChecker);
+    }
+
+
+    private String findAvailableSpaceInLineToWin(ArrayList<HashMap<String, String>> cells) {
         int playersSymbolCounter = 0;
         String availableSpace = "";
 
-        for(String cell : line) {
-            if (cell.equals(this.getSymbol())) {
-                playersSymbolCounter++;
-            } else if (cell.equals(" ")) {
-                availableSpace = cell;
+        for(HashMap<String, String> cellMap : cells) {
+            for (Map.Entry<String, String> cell : cellMap.entrySet()) {
+                String cellValue = cell.getValue();
+                String cellCoordinate = cell.getKey();
+
+                if (cellValue.equals(this.getSymbol())) {
+                    playersSymbolCounter++;
+                } else if (cell.equals(" ")) {
+                    availableSpace = cellCoordinate;
+                }
             }
         }
 
@@ -149,7 +150,37 @@ public class Computer extends User{
         return null; // No available space found
     }
 
-    private String getAvailableSpaceToBlockOpponentWin(ArrayList<ArrayList<String>> table) {
-        return null;
+    private String getAvailableSpaceToBlockOpponentWin(ArrayList<ArrayList<String>> table, Function<    ArrayList<HashMap<String, String>>, String> lineChecker) {
+        return getAvailableSpaceByFunction(table, lineChecker);
+    }
+
+    private String findAvailableSpaceInLineToBlockOpponentsWin(ArrayList<HashMap<String, String>> cells) {
+        int opponentsSymbolCounter = 0;
+        String availableSpace = "";
+
+        System.out.println("cell size " + cells.size());
+
+        for(HashMap<String, String> cellMap : cells) {
+            System.out.println("cellMap size " + cellMap.size());
+            for (Map.Entry<String, String> cell : cellMap.entrySet()) {
+                String cellValue = cell.getValue();
+                String cellCoordinate = cell.getKey();
+
+                System.out.println("(" + cellCoordinate + ") "+ cellValue);
+                if (cellValue.equals(this.getOpponentsSymbol())) {
+                    opponentsSymbolCounter++;
+                } else if (cell.equals(" ")) {
+                    availableSpace = cellCoordinate;
+                }
+            }
+        }
+
+        System.out.println(opponentsSymbolCounter);
+
+        if (opponentsSymbolCounter == 2) {
+            return availableSpace;
+        }
+
+        return null; // No available space found
     }
 }

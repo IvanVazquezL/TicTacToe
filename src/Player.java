@@ -11,5 +11,9 @@ public abstract class Player {
         return symbol;
     }
 
+    public String getOpponentsSymbol() {
+        return symbol.equals("X") ? "O" : "X";
+    }
+
     public abstract int[] getCoordinates(ArrayList<String> availableSpaces, ArrayList<ArrayList<String>> table);
 }

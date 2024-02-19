@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="add32867-b54c-4bf2-a0a9-091139289584" name="Changes" comment="Stage Two Solution Computer Player">
-      <change afterPath="$PROJECT_DIR$/src/Computer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/User.java" afterDir="false" />
+    <list default="true" id="add32867-b54c-4bf2-a0a9-091139289584" name="Changes" comment="Stage Three Solution Computer Player medium">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TicTacToe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TicTacToe.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +96,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708220884172</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Stage Three Solution Computer Player medium">
+      <option name="closed" value="true" />
+      <created>1708282455931</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1708282455932</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -108,6 +112,7 @@
     <MESSAGE value="Loop TicTacToe" />
     <MESSAGE value="Stage One Solution" />
     <MESSAGE value="Stage Two Solution Computer Player" />
-    <option name="LAST_COMMIT_MESSAGE" value="Stage Two Solution Computer Player" />
+    <MESSAGE value="Stage Three Solution Computer Player medium" />
+    <option name="LAST_COMMIT_MESSAGE" value="Stage Three Solution Computer Player medium" />
   </component>
 </project>
