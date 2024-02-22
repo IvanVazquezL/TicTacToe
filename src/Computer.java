@@ -14,7 +14,7 @@ public class Computer extends User{
         System.out.printf("Making move level \"%s\"\n", difficulty);
         String inputLine;
 
-        System.out.println(availableSpaces);
+        //System.out.println(availableSpaces);
 
         switch (difficulty) {
             case "easy":
@@ -23,12 +23,15 @@ public class Computer extends User{
             case "medium":
                 inputLine = getMediumAvailableSpace(availableSpaces, table);
                 break;
+            case "hard":
+                inputLine = getHardAvailableSpace(table);
+                break;
             default:
                 inputLine = "";
                 break;
         }
 
-        System.out.printf("inputLine: %s\n", inputLine);
+        //System.out.printf("inputLine: %s\n", inputLine);
 
         availableSpaces.remove(inputLine);
 
@@ -127,7 +130,7 @@ public class Computer extends User{
             String cellValue = cell.getValue();
             String cellCoordinate = cell.getKey();
 
-            System.out.println("(" + cellCoordinate + ") "+ cellValue);
+            //System.out.println("(" + cellCoordinate + ") "+ cellValue);
 
             if (cellValue.equals(this.getSymbol())) {
                 playersSymbolCounter++;
@@ -166,13 +169,23 @@ public class Computer extends User{
             }
         }
 
-        System.out.println(opponentsSymbolCounter);
+        //System.out.println(opponentsSymbolCounter);
 
         if (opponentsSymbolCounter == 2 && availableSpaceExistsInLine) {
-            System.out.println("op: " +availableSpace);
+            //System.out.println("op: " +availableSpace);
             return availableSpace;
         }
 
         return null; // No available space found
+    }
+
+    private String getHardAvailableSpace(ArrayList<ArrayList<String>> table) {
+        Move move = Minimax.getMove(table, this.getSymbol(), this.getOpponentsSymbol());
+        ArrayList<String> availableSpots = new ArrayList<>(Arrays.asList(
+                "1 1", "1 2", "1 3",
+                "2 1", "2 2", "2 3",
+                "3 1", "3 2", "3 3"
+        ));
+        return availableSpots.get(move.getIndex());
     }
 }
